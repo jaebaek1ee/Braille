@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0c1220">
+<title>점자 학습</title>
+<link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoi7KCQ7J6QIO2VmeyKtSIsInNob3J0X25hbWUiOiLsoIDsnpAiLCJzdGFydF91cmwiOiIuIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiIzBjMTIyMCIsInRoZW1lX2NvbG9yIjoiIzBjMTIyMCJ9">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--bg:#0c1220;--bg2:#141d2e;--bg3:#1a2540;--bg4:#223054;--text:#e8ecf4;--text2:#94a3bf;--text3:#5a6b85;--accent:#4fc3f7;--accent2:#29b6f6;--warm:#ffab40;--warm2:#ff9100;--green:#66bb6a;--red:#ef5350;--card:#16213a;--card2:#1b2a48;--border:#1e3050;--radius:16px;--radius-sm:10px;--font:'Noto Sans KR',system-ui,-apple-system,sans-serif}
+html,body,#root{height:100%;width:100%;overflow:hidden}
+body{font-family:var(--font);color:var(--text);background:linear-gradient(170deg,#0c1220 0%,#0f1829 50%,#111e33 100%)}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:4px}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+@keyframes popIn{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const {useState,useEffect}=React;
+
+const CHOSUNG=[{char:'ㄱ',dots:[4],desc:'기역'},{char:'ㄴ',dots:[1,4],desc:'니은'},{char:'ㄷ',dots:[2,4],desc:'디귿'},{char:'ㄹ',dots:[5],desc:'리을'},{char:'ㅁ',dots:[1,5],desc:'미음'},{char:'ㅂ',dots:[4,5],desc:'비읍'},{char:'ㅅ',dots:[6],desc:'시옷'},{char:'ㅇ',dots:[],desc:'이응 (초성에서 생략)'},{char:'ㅈ',dots:[4,6],desc:'지읒'},{char:'ㅊ',dots:[5,6],desc:'치읓'},{char:'ㅋ',dots:[1,2,4],desc:'키읔'},{char:'ㅌ',dots:[1,2,5],desc:'티읕'},{char:'ㅍ',dots:[1,4,5],desc:'피읖'},{char:'ㅎ',dots:[2,4,5],desc:'히읗'}];
+const JONGSUNG=[{char:'ㄱ',dots:[1],desc:'기역 받침'},{char:'ㄴ',dots:[2,5],desc:'니은 받침'},{char:'ㄷ',dots:[3,5],desc:'디귿 받침'},{char:'ㄹ',dots:[2],desc:'리을 받침'},{char:'ㅁ',dots:[2,6],desc:'미음 받침'},{char:'ㅂ',dots:[1,2],desc:'비읍 받침'},{char:'ㅅ',dots:[3],desc:'시옷 받침'},{char:'ㅇ',dots:[2,3,5,6],desc:'이응 받침'},{char:'ㅈ',dots:[1,3],desc:'지읒 받침'},{char:'ㅊ',dots:[2,3],desc:'치읓 받침'},{char:'ㅋ',dots:[2,3,5],desc:'키읔 받침'},{char:'ㅌ',dots:[2,3,6],desc:'티읕 받침'},{char:'ㅍ',dots:[2,5,6],desc:'피읖 받침'},{char:'ㅎ',dots:[3,5,6],desc:'히읗 받침'}];
+const MOEUM=[{char:'ㅏ',dots:[1,2,6],desc:'아'},{char:'ㅑ',dots:[3,4,5],desc:'야'},{char:'ㅓ',dots:[2,3,4],desc:'어'},{char:'ㅕ',dots:[1,5,6],desc:'여'},{char:'ㅗ',dots:[1,3,6],desc:'오'},{char:'ㅛ',dots:[3,4,6],desc:'요'},{char:'ㅜ',dots:[1,3,4],desc:'우'},{char:'ㅠ',dots:[1,4,6],desc:'유'},{char:'ㅡ',dots:[2,4,6],desc:'으'},{char:'ㅣ',dots:[1,3,5],desc:'이'},{char:'ㅐ',dots:[1,2,3,5],desc:'애'},{char:'ㅔ',dots:[1,3,4,5],desc:'에'},{char:'ㅖ',dots:[3,4],desc:'예'},{char:'ㅚ',dots:[1,2,3,4,5],desc:'외'}];
+const YAKJA=[{char:'가',dots:[[1,2,4,6]],desc:'가 약자 (1칸)'},{char:'사',dots:[[1,2,3]],desc:'사 약자 (1칸)'},{char:'나',dots:[[1,4]],desc:'나 = ㄴ (ㅏ 생략)'},{char:'다',dots:[[2,4]],desc:'다 = ㄷ (ㅏ 생략)'},{char:'마',dots:[[1,5]],desc:'마 = ㅁ (ㅏ 생략)'},{char:'바',dots:[[4,5]],desc:'바 = ㅂ (ㅏ 생략)'},{char:'자',dots:[[4,6]],desc:'자 = ㅈ (ㅏ 생략)'},{char:'카',dots:[[1,2,4]],desc:'카 = ㅋ (ㅏ 생략)'},{char:'타',dots:[[1,2,5]],desc:'타 = ㅌ (ㅏ 생략)'},{char:'파',dots:[[1,4,5]],desc:'파 = ㅍ (ㅏ 생략)'},{char:'하',dots:[[2,4,5]],desc:'하 = ㅎ (ㅏ 생략)'}];
+const YAKYEO=[{char:'그래서',dots:[[1],[1,2,6]],desc:'약어'},{char:'그러나',dots:[[1],[1,4]],desc:'약어'},{char:'그러면',dots:[[1],[1,5]],desc:'약어'},{char:'그러므로',dots:[[1],[2,6]],desc:'약어'},{char:'그런데',dots:[[1],[2,4]],desc:'약어'},{char:'그리고',dots:[[1],[1,3,6]],desc:'약어'},{char:'그리하여',dots:[[1],[2,4,5]],desc:'약어'}];
+const SSANG=[{char:'ㄲ',dots:[[6],[4]],desc:'쌍기역 = 된소리표+ㄱ'},{char:'ㄸ',dots:[[6],[2,4]],desc:'쌍디귿 = 된소리표+ㄷ'},{char:'ㅃ',dots:[[6],[4,5]],desc:'쌍비읍 = 된소리표+ㅂ'},{char:'ㅆ',dots:[[6],[6]],desc:'쌍시옷 = 된소리표+ㅅ'},{char:'ㅉ',dots:[[6],[4,6]],desc:'쌍지읒 = 된소리표+ㅈ'}];
+
+const CHOSUNG_MAP={};CHOSUNG.forEach(c=>{if(c.char!=='ㅇ')CHOSUNG_MAP[c.char]=c.dots});
+const JONGSUNG_MAP={};JONGSUNG.forEach(c=>JONGSUNG_MAP[c.char]=c.dots);
+const MOEUM_MAP={};MOEUM.forEach(m=>MOEUM_MAP[m.char]=m.dots);
+const CV={'ㅘ':[[1,3,6],[1,2,6]],'ㅝ':[[1,3,4],[2,3,4]],'ㅢ':[[2,4,6],[1,3,5]],'ㅟ':[[1,3,4],[1,2,3,5]],'ㅒ':[[3,4,5],[1,2,3,5]],'ㅙ':[[1,3,6],[1,2,3,5]],'ㅞ':[[1,3,4],[1,2,3,5]]};
+const CHO_L=['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
+const JUNG_L=['ㅏ','ㅐ','ㅑ','ㅒ','ㅓ','ㅔ','ㅕ','ㅖ','ㅗ','ㅘ','ㅙ','ㅚ','ㅛ','ㅜ','ㅝ','ㅞ','ㅟ','ㅠ','ㅡ','ㅢ','ㅣ'];
+const JONG_L=['','ㄱ','ㄲ','ㄳ','ㄴ','ㄵ','ㄶ','ㄷ','ㄹ','ㄺ','ㄻ','ㄼ','ㄽ','ㄾ','ㄿ','ㅀ','ㅁ','ㅂ','ㅄ','ㅅ','ㅆ','ㅇ','ㅈ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
+const DB={'ㄳ':['ㄱ','ㅅ'],'ㄵ':['ㄴ','ㅈ'],'ㄶ':['ㄴ','ㅎ'],'ㄺ':['ㄹ','ㄱ'],'ㄻ':['ㄹ','ㅁ'],'ㄼ':['ㄹ','ㅂ'],'ㄽ':['ㄹ','ㅅ'],'ㄾ':['ㄹ','ㅌ'],'ㄿ':['ㄹ','ㅍ'],'ㅀ':['ㄹ','ㅎ'],'ㅄ':['ㅂ','ㅅ']};
+const SM={'ㄲ':'ㄱ','ㄸ':'ㄷ','ㅃ':'ㅂ','ㅆ':'ㅅ','ㅉ':'ㅈ'};
+
+function decompose(ch){const c=ch.charCodeAt(0);if(c<0xAC00||c>0xD7A3)return null;const o=c-0xAC00;return{cho:CHO_L[Math.floor(o/588)],jung:JUNG_L[Math.floor((o%588)/28)],jong:JONG_L[o%28]}}
+function s2b(ch){const d=decompose(ch);if(!d)return[];const c=[];if(SM[d.cho]){c.push([6]);c.push(CHOSUNG_MAP[SM[d.cho]]||[])}else if(d.cho!=='ㅇ')c.push(CHOSUNG_MAP[d.cho]||[]);if(MOEUM_MAP[d.jung])c.push(MOEUM_MAP[d.jung]);else if(CV[d.jung])CV[d.jung].forEach(x=>c.push(x));if(d.jong&&JONGSUNG_MAP[d.jong])c.push(JONGSUNG_MAP[d.jong]);else if(d.jong&&DB[d.jong])DB[d.jong].forEach(j=>{if(JONGSUNG_MAP[j])c.push(JONGSUNG_MAP[j])});return c}
+function w2b(w){const c=[];for(const ch of w)c.push(...s2b(ch));return c}
+
+const WORDS=['사랑','가족','엄마','아빠','학교','선생','공부','친구','우리','나라','하늘','바다','산','물','꽃','나무','집','문','창','길','밥','빵','고기','과일','아침','점심','저녁','오늘','내일','어제','시간','요일','봄','여름','가을','겨울','비','눈','바람','해','책','글','말','노래','음악','영화','운동','건강','병원','약','돈','일','회사','전화','버스','지하철','고양이','강아지','새','호랑이','코끼리','토끼','감사','행복','희망','평화','자유','사람','세상','마음'];
+
+const S={
+  app:{display:'flex',flexDirection:'column',height:'100%',maxWidth:480,margin:'0 auto',position:'relative'},
+  content:{flex:1,overflow:'auto',padding:'0 16px 100px',WebkitOverflowScrolling:'touch'},
+  tabBar:{position:'fixed',bottom:0,left:0,right:0,display:'flex',justifyContent:'center',padding:'0 0 env(safe-area-inset-bottom)',background:'linear-gradient(to top,rgba(12,18,32,.98),rgba(12,18,32,.9),transparent)',backdropFilter:'blur(20px)',WebkitBackdropFilter:'blur(20px)',zIndex:100},
+  tabBarInner:{display:'flex',maxWidth:480,width:'100%',padding:'8px 16px 12px'},
+  tab:{flex:1,display:'flex',flexDirection:'column',alignItems:'center',gap:3,padding:'8px 0',border:'none',background:'none',color:'var(--text3)',fontSize:10,fontWeight:500,fontFamily:'var(--font)',cursor:'pointer',transition:'all .2s',borderRadius:12},
+  tabActive:{color:'var(--accent)'},
+  card:{background:'var(--card)',borderRadius:'var(--radius)',padding:16,marginBottom:10,border:'1px solid var(--border)',transition:'all .2s'},
+  btn:{display:'inline-flex',alignItems:'center',justifyContent:'center',gap:6,padding:'10px 20px',borderRadius:'var(--radius-sm)',border:'none',fontFamily:'var(--font)',fontSize:14,fontWeight:600,cursor:'pointer',transition:'all .2s'},
+  btnP:{background:'linear-gradient(135deg,var(--accent),var(--accent2))',color:'#fff',boxShadow:'0 4px 15px rgba(79,195,247,.3)'},
+  btnW:{background:'linear-gradient(135deg,var(--warm),var(--warm2))',color:'#fff',boxShadow:'0 4px 15px rgba(255,171,64,.3)'},
+  btnG:{background:'var(--bg3)',color:'var(--text2)'},
+};
+
+function BrailleCell({dots=[],size=48,showNumbers=false,highlight=false}){
+  const r=size*.13,g=size*.28,ox=size*.28,oy=size*.18;
+  const P=[{x:ox,y:oy,n:1},{x:ox+g,y:oy,n:4},{x:ox,y:oy+g,n:2},{x:ox+g,y:oy+g,n:5},{x:ox,y:oy+g*2,n:3},{x:ox+g,y:oy+g*2,n:6}];
+  return(<svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} style={{flexShrink:0}}>
+    <rect x={1} y={1} width={size-2} height={size-2} rx={size*.16} fill={highlight?"rgba(79,195,247,.08)":"rgba(255,255,255,.03)"} stroke={highlight?"rgba(79,195,247,.3)":"rgba(255,255,255,.06)"} strokeWidth={1}/>
+    {P.map(p=>{const on=dots.includes(p.n);return<g key={p.n}><circle cx={p.x} cy={p.y} r={r} fill={on?"#4fc3f7":"rgba(255,255,255,.06)"} style={on?{filter:'drop-shadow(0 0 4px rgba(79,195,247,.5))'}:{}}/>{showNumbers&&<text x={p.x} y={p.y+1} textAnchor="middle" dominantBaseline="middle" fill={on?"#fff":"rgba(255,255,255,.15)"} fontSize={r*1.1} fontWeight={600} fontFamily="var(--font)">{p.n}</text>}</g>})}
+  </svg>);
+}
+
+function BC({cellsArray,size=44,showNumbers=false}){
+  return<div style={{display:'flex',gap:2,flexWrap:'wrap',alignItems:'center'}}>{cellsArray.map((d,i)=><BrailleCell key={i} dots={d} size={size} showNumbers={showNumbers}/>)}</div>;
+}
+
+function HiddenBlock({onClick,w='60px',h='32px'}){
+  return<div onClick={onClick} style={{display:'inline-flex',alignItems:'center',justifyContent:'center',minWidth:w,height:h,padding:'0 10px',background:'var(--bg4)',borderRadius:8,cursor:'pointer',border:'1px dashed var(--text3)',fontSize:12,color:'var(--text3)',fontWeight:500,userSelect:'none'}}>탭</div>;
+}
+
+function HideBar({hL,sHL,hR,sHR,lL='한글',lR='점자'}){
+  const ts=(a)=>({...S.btn,padding:'6px 12px',fontSize:11,fontWeight:600,background:a?'rgba(79,195,247,.15)':'var(--bg3)',color:a?'var(--accent)':'var(--text3)',border:a?'1px solid rgba(79,195,247,.3)':'1px solid transparent'});
+  return<div style={{display:'flex',gap:6,marginBottom:12,alignItems:'center',flexWrap:'wrap'}}>
+    <button onClick={()=>sHL(!hL)} style={ts(hL)}>{lL} {hL?'가림 👁':'보임'}</button>
+    <button onClick={()=>sHR(!hR)} style={ts(hR)}>{lR} {hR?'가림 👁':'보임'}</button>
+    {(hL||hR)&&<button onClick={()=>{sHL(false);sHR(false)}} style={{...S.btn,padding:'6px 10px',fontSize:11,background:'none',color:'var(--text3)'}}>전체 보기</button>}
+  </div>;
+}
+
+// ── 자모 아이템: 왼쪽 한글 | 오른쪽 점자 ──
+function JamoItem({char,dots,desc,index,hL,hR}){
+  const [exp,setExp]=useState(false);
+  const [rL,sRL]=useState(false);
+  const [rR,sRR]=useState(false);
+  const mc=Array.isArray(dots[0]);const ca=mc?dots:[dots];
+  useEffect(()=>sRL(false),[hL]);useEffect(()=>sRR(false),[hR]);
+  const sL=!hL||rL,sR=!hR||rR;
+  return<div style={{...S.card,animation:`fadeIn .3s ease ${index*.03}s both`,cursor:'pointer'}} onClick={()=>{if(!hL&&!hR)setExp(!exp)}}>
+    <div style={{display:'flex',alignItems:'center',gap:12}}>
+      <div style={{flexShrink:0,minWidth:52,textAlign:'center'}}>
+        {sL?<div style={{fontSize:28,fontWeight:900,color:'var(--accent)'}}>{char}</div>:<HiddenBlock w="48px" h="38px" onClick={e=>{e.stopPropagation();sRL(true)}}/>}
+      </div>
+      <div style={{width:1,height:36,background:'var(--border)',flexShrink:0}}/>
+      <div style={{flex:1,display:'flex',justifyContent:'flex-end'}} onClick={e=>{if(hR&&!rR){e.stopPropagation();sRR(true)}}}>
+        {sR?<BC cellsArray={ca} size={exp?52:44} showNumbers={exp}/>:<HiddenBlock w="80px" h="38px" onClick={e=>{e.stopPropagation();sRR(true)}}/>}
+      </div>
+    </div>
+    {exp&&sL&&sR&&<div style={{marginTop:12,paddingTop:12,borderTop:'1px solid var(--border)',fontSize:13,color:'var(--text2)',lineHeight:1.6}}>
+      {desc}{dots.length>0&&!mc&&<span style={{marginLeft:8,color:'var(--text3)'}}>({dots.join('·')}점)</span>}
+    </div>}
+  </div>;
+}
+
+// ── 퀴즈 (자모용) ──
+function Quiz({items,onBack,title}){
+  const [dk,sDk]=useState([]);const [cur,sCur]=useState(null);const [opts,sOpts]=useState([]);
+  const [sel,sSel]=useState(null);const [sc,sSc]=useState({c:0,w:0});const [tot,sTot]=useState(0);
+  const [done,sDone]=useState(false);const [dir,sDir]=useState('b2h');const [setup,sSetup]=useState(true);const [ak,sAk]=useState(0);
+  const start=(d)=>{sDir(d);const sh=[...items].sort(()=>Math.random()-.5);sDk(sh);sTot(sh.length);sSc({c:0,w:0});sDone(false);sSetup(false);loadQ(sh,d)};
+  const loadQ=(d)=>{if(!d.length){sDone(true);return}const q=d[0];sCur(q);sSel(null);sAk(k=>k+1);const pool=items.filter(i=>i.char!==q.char);sOpts([q,...[...pool].sort(()=>Math.random()-.5).slice(0,3)].sort(()=>Math.random()-.5));sDk(d.slice(1))};
+  const ans=(o)=>{if(sel!==null)return;sSel(o.char);const ok=o.char===cur.char;if(ok){sSc(s=>({...s,c:s.c+1}));setTimeout(()=>loadQ(dk),600)}else{sSc(s=>({...s,w:s.w+1}));const nd=[...dk,cur];sDk(nd);setTimeout(()=>loadQ(nd),1200)}};
+  if(setup)return<div style={{animation:'fadeIn .3s ease'}}>
+    <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:24}}>
+      <button onClick={onBack} style={{...S.btn,...S.btnG,padding:'8px 14px',fontSize:13}}>← 돌아가기</button>
+      <span style={{fontSize:16,fontWeight:700}}>{title} 퀴즈</span></div>
+    <div style={{...S.card,textAlign:'center',padding:24}}>
+      <div style={{fontSize:48,marginBottom:16}}>🧠</div>
+      <div style={{fontSize:18,fontWeight:700,marginBottom:8}}>퀴즈 방향 선택</div>
+      <div style={{fontSize:13,color:'var(--text2)',marginBottom:24}}>총 {items.length}문제 · 4지선다 · 틀린 문제 반복</div>
+      <div style={{display:'flex',flexDirection:'column',gap:10}}>
+        <button onClick={()=>start('b2h')} style={{...S.btn,...S.btnP,width:'100%',padding:'14px'}}>점자 → 한글 맞추기</button>
+        <button onClick={()=>start('h2b')} style={{...S.btn,...S.btnW,width:'100%',padding:'14px'}}>한글 → 점자 맞추기</button>
+      </div></div></div>;
+  if(done){const p=Math.round(sc.c/(sc.c+sc.w)*100);return<div style={{animation:'fadeIn .3s ease',textAlign:'center',paddingTop:40}}>
+    <div style={{fontSize:64,marginBottom:16}}>{p>=80?'🎉':p>=50?'👍':'💪'}</div>
+    <div style={{fontSize:24,fontWeight:900,marginBottom:8}}>퀴즈 완료!</div>
+    <div style={{fontSize:15,color:'var(--text2)',marginBottom:24}}>정답 {sc.c} / 오답 {sc.w} ({p}%)</div>
+    <div style={{display:'flex',gap:10,justifyContent:'center'}}><button onClick={()=>sSetup(true)} style={{...S.btn,...S.btnP}}>다시</button><button onClick={onBack} style={{...S.btn,...S.btnG}}>돌아가기</button></div></div>}
+  if(!cur)return null;
+  const mc=Array.isArray(cur.dots[0]);const ca=mc?cur.dots:[cur.dots];const a=sc.c+sc.w;
+  return<div style={{animation:'fadeIn .2s ease'}}>
+    <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:16}}>
+      <button onClick={onBack} style={{...S.btn,...S.btnG,padding:'6px 12px',fontSize:12}}>✕ 종료</button>
+      <div style={{fontSize:12,color:'var(--text3)'}}>{a}/{tot+sc.w} · 남은 {dk.length+1}</div></div>
+    <div style={{height:3,background:'var(--bg4)',borderRadius:2,marginBottom:20,overflow:'hidden'}}><div style={{height:'100%',background:'var(--accent)',borderRadius:2,transition:'width .3s',width:`${Math.min(100,a/tot*100)}%`}}/></div>
+    <div key={ak} style={{...S.card,textAlign:'center',padding:28,marginBottom:16,animation:'popIn .25s ease',background:'linear-gradient(145deg,var(--card),var(--card2))'}}>
+      <div style={{fontSize:11,color:'var(--text3)',marginBottom:12,fontWeight:500}}>{dir==='b2h'?'이 점자는?':'이것의 점자는?'}</div>
+      {dir==='b2h'?<div style={{display:'flex',justifyContent:'center'}}><BC cellsArray={ca} size={72}/></div>:<div style={{fontSize:48,fontWeight:900,color:'var(--accent)'}}>{cur.char}</div>}
+    </div>
+    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>
+      {opts.map(o=>{const ok=o.char===cur.char;const isSel=sel===o.char;const sr=sel!==null;const om=Array.isArray(o.dots[0]);const oc=om?o.dots:[o.dots];
+        let bg='var(--card)',bd='var(--border)',an='';
+        if(sr&&ok){bg='rgba(102,187,106,.15)';bd='rgba(102,187,106,.5)'}
+        if(sr&&isSel&&!ok){bg='rgba(239,83,80,.15)';bd='rgba(239,83,80,.5)';an='shake .4s ease'}
+        return<button key={o.char} onClick={()=>ans(o)} disabled={sr} style={{...S.card,padding:14,textAlign:'center',cursor:sel?'default':'pointer',background:bg,borderColor:bd,animation:an,opacity:sr&&!ok&&!isSel?.4:1,transition:'all .3s'}}>
+          {dir==='b2h'?<div style={{fontSize:22,fontWeight:800}}>{o.char}</div>:<div style={{display:'flex',justifyContent:'center'}}><BC cellsArray={oc} size={38}/></div>}
+        </button>})}
+    </div></div>;
+}
+
+// ── 자모 탭 ──
+function JamoTab(){
+  const [cat,sCat]=useState(null);const [quiz,sQuiz]=useState(false);
+  const [hL,sHL]=useState(false);const [hR,sHR]=useState(false);
+  const cats=[{id:'cho',l:'초성',e:'🔤',d:CHOSUNG,ds:'첫소리 자음 14개'},{id:'mo',l:'모음',e:'🔡',d:MOEUM,ds:'홀소리 14개'},{id:'jong',l:'종성',e:'📝',d:JONGSUNG,ds:'받침 자음 14개'},{id:'yakja',l:'약자',e:'⚡',d:YAKJA,ds:'자주 쓰는 글자 축약'},{id:'ssang',l:'쌍자음',e:'✌️',d:SSANG,ds:'된소리 5개'},{id:'yakyeo',l:'약어',e:'💬',d:YAKYEO,ds:'축약 단어 7개'}];
+  if(quiz&&cat){const c=cats.find(x=>x.id===cat);const qi=c.d.filter(d=>d.dots&&(Array.isArray(d.dots[0])?d.dots[0].length>0:d.dots.length>0));return<Quiz items={qi} onBack={()=>sQuiz(false)} title={c.l}/>}
+  if(cat){const c=cats.find(x=>x.id===cat);const qi=c.d.filter(d=>d.dots&&(Array.isArray(d.dots[0])?d.dots[0].length>0:d.dots.length>0));
+    return<div>
+      <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:12}}>
+        <button onClick={()=>{sCat(null);sHL(false);sHR(false)}} style={{...S.btn,...S.btnG,padding:'8px 14px',fontSize:13}}>← 목록</button>
+        <span style={{fontSize:16,fontWeight:700}}>{c.e} {c.l}</span><span style={{fontSize:12,color:'var(--text3)'}}>{c.d.length}개</span></div>
+      <HideBar hL={hL} sHL={sHL} hR={hR} sHR={sHR} lL="한글" lR="점자"/>
+      {qi.length>=4&&<button onClick={()=>sQuiz(true)} style={{...S.btn,...S.btnP,width:'100%',marginBottom:14,padding:'12px'}}>🧠 퀴즈 시작 ({qi.length}문제)</button>}
+      {c.d.map((it,i)=><JamoItem key={it.char+i} char={it.char} dots={it.dots} desc={it.desc} index={i} hL={hL} hR={hR}/>)}
+    </div>}
+  return<div>
+    <div style={{marginBottom:20}}>
+      <div style={{fontSize:13,color:'var(--text2)',lineHeight:1.7,marginBottom:4}}>한글 점자의 기본 구성요소를 배워보세요.</div>
+      <div style={{fontSize:11,color:'var(--text3)'}}>카테고리 선택 → 학습 + 가리기 + 퀴즈</div></div>
+    <div style={{...S.card,padding:20,marginBottom:16,background:'linear-gradient(145deg,var(--card),var(--card2))'}}>
+      <div style={{display:'flex',alignItems:'center',gap:16}}>
+        <BrailleCell dots={[1,2,3,4,5,6]} size={64} showNumbers={true}/>
+        <div><div style={{fontSize:14,fontWeight:700,marginBottom:4}}>점자 1칸 = 6개 점</div>
+          <div style={{fontSize:12,color:'var(--text2)',lineHeight:1.6}}>왼쪽 위→아래: 1·2·3점<br/>오른쪽 위→아래: 4·5·6점</div></div></div></div>
+    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>
+      {cats.map((c,i)=><button key={c.id} onClick={()=>sCat(c.id)} style={{...S.card,padding:18,textAlign:'center',cursor:'pointer',animation:`fadeIn .3s ease ${i*.05}s both`,border:'1px solid var(--border)'}}>
+        <div style={{fontSize:32,marginBottom:8}}>{c.e}</div><div style={{fontSize:15,fontWeight:700,marginBottom:2}}>{c.l}</div>
+        <div style={{fontSize:12,color:'var(--text3)'}}>{c.d.length}개</div><div style={{fontSize:11,color:'var(--text3)',marginTop:4}}>{c.ds}</div></button>)}
+    </div></div>;
+}
+
+// ── 단어 아이템: 왼쪽 한글 | 오른쪽 점자 ──
+function WordItem({word,index,hL,hR}){
+  const [exp,setExp]=useState(false);const [rL,sRL]=useState(false);const [rR,sRR]=useState(false);
+  const ac=w2b(word);const chars=[...word];
+  useEffect(()=>sRL(false),[hL]);useEffect(()=>sRR(false),[hR]);
+  const sL=!hL||rL,sR=!hR||rR;
+  return<div style={{...S.card,animation:`fadeIn .3s ease ${index*.02}s both`,cursor:'pointer'}} onClick={()=>{if(!hL&&!hR)setExp(!exp)}}>
+    <div style={{display:'flex',alignItems:'center',gap:12}}>
+      <div style={{flexShrink:0,minWidth:56,textAlign:'center'}}>
+        {sL?<div style={{fontSize:20,fontWeight:800,color:'var(--warm)'}}>{word}</div>:<HiddenBlock w="52px" h="34px" onClick={e=>{e.stopPropagation();sRL(true)}}/>}
+      </div>
+      <div style={{width:1,height:32,background:'var(--border)',flexShrink:0}}/>
+      <div style={{flex:1,display:'flex',justifyContent:'flex-end',flexWrap:'wrap',gap:1}} onClick={e=>{if(hR&&!rR){e.stopPropagation();sRR(true)}}}>
+        {sR?ac.map((d,i)=><BrailleCell key={i} dots={d} size={30}/>):<HiddenBlock w="90px" h="34px" onClick={e=>{e.stopPropagation();sRR(true)}}/>}
+      </div>
+    </div>
+    {exp&&sL&&sR&&<div style={{marginTop:14,paddingTop:14,borderTop:'1px solid var(--border)'}}>
+      <div style={{fontSize:12,color:'var(--text3)',marginBottom:10}}>글자별 분해:</div>
+      {chars.map((ch,ci)=>{const d=decompose(ch);const cells=s2b(ch);if(!d)return null;
+        return<div key={ci} style={{display:'flex',alignItems:'center',gap:10,marginBottom:8,padding:'8px 12px',background:'var(--bg3)',borderRadius:8}}>
+          <span style={{fontSize:18,fontWeight:700,width:30,textAlign:'center'}}>{ch}</span>
+          <span style={{fontSize:11,color:'var(--text2)',flex:'0 0 80px'}}>{d.cho}+{d.jung}{d.jong?'+'+d.jong:''}</span>
+          <div style={{display:'flex',gap:2}}>{cells.map((dd,i)=><BrailleCell key={i} dots={dd} size={36} showNumbers={true}/>)}</div></div>})}
+    </div>}
+  </div>;
+}
+
+// ── 단어 퀴즈 ──
+function WordQuiz({onBack}){
+  const [dk,sDk]=useState([]);const [cur,sCur]=useState(null);const [opts,sOpts]=useState([]);
+  const [sel,sSel]=useState(null);const [sc,sSc]=useState({c:0,w:0});const [tot,sTot]=useState(0);
+  const [done,sDone]=useState(false);const [dir,sDir]=useState('b2h');const [setup,sSetup]=useState(true);const [cnt,sCnt]=useState(20);const [ak,sAk]=useState(0);
+  const start=(d)=>{sDir(d);const sh=[...WORDS].sort(()=>Math.random()-.5).slice(0,cnt);sDk(sh.slice(1));sTot(sh.length);sSc({c:0,w:0});sDone(false);sSetup(false);loadQ(sh[0],sh.slice(1))};
+  const loadQ=(w,d)=>{if(!w){sDone(true);return}sCur(w);sSel(null);sAk(k=>k+1);const wr=[...WORDS.filter(x=>x!==w)].sort(()=>Math.random()-.5).slice(0,3);sOpts([w,...wr].sort(()=>Math.random()-.5));sDk(d)};
+  const ans=(o)=>{if(sel!==null)return;sSel(o);const ok=o===cur;if(ok){sSc(s=>({...s,c:s.c+1}));setTimeout(()=>loadQ(dk[0],dk.slice(1)),500)}else{sSc(s=>({...s,w:s.w+1}));const nd=[...dk,cur];sDk(nd);setTimeout(()=>loadQ(nd[0],nd.slice(1)),1000)}};
+  if(setup)return<div style={{animation:'fadeIn .3s ease'}}>
+    <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:20}}>
+      <button onClick={onBack} style={{...S.btn,...S.btnG,padding:'8px 14px',fontSize:13}}>← 돌아가기</button><span style={{fontSize:16,fontWeight:700}}>단어 퀴즈</span></div>
+    <div style={{...S.card,textAlign:'center',padding:24}}>
+      <div style={{fontSize:48,marginBottom:16}}>📖</div>
+      <div style={{fontSize:13,color:'var(--text2)',marginBottom:16}}>단어 개수: <strong style={{color:'var(--warm)'}}>{cnt}개</strong></div>
+      <input type="range" min={5} max={WORDS.length} value={cnt} onChange={e=>sCnt(+e.target.value)} style={{width:'100%',marginBottom:20,accentColor:'var(--warm)'}}/>
+      <div style={{display:'flex',gap:6,justifyContent:'center',flexWrap:'wrap',marginBottom:20}}>
+        {[10,20,30,50].map(n=><button key={n} onClick={()=>sCnt(Math.min(n,WORDS.length))} style={{...S.btn,padding:'6px 16px',fontSize:12,...(cnt===n?S.btnW:S.btnG)}}>{n}개</button>)}</div>
+      <div style={{display:'flex',flexDirection:'column',gap:10}}>
+        <button onClick={()=>start('b2h')} style={{...S.btn,...S.btnP,width:'100%',padding:'14px'}}>점자 → 단어 맞추기</button>
+        <button onClick={()=>start('h2b')} style={{...S.btn,...S.btnW,width:'100%',padding:'14px'}}>단어 → 점자 맞추기</button>
+      </div></div></div>;
+  if(done){const p=Math.round(sc.c/(sc.c+sc.w)*100);return<div style={{animation:'fadeIn .3s ease',textAlign:'center',paddingTop:40}}>
+    <div style={{fontSize:64,marginBottom:16}}>{p>=80?'🎉':p>=50?'👍':'💪'}</div>
+    <div style={{fontSize:24,fontWeight:900,marginBottom:8}}>완료!</div>
+    <div style={{fontSize:15,color:'var(--text2)',marginBottom:24}}>정답 {sc.c} / 오답 {sc.w} ({p}%)</div>
+    <div style={{display:'flex',gap:10,justifyContent:'center'}}><button onClick={()=>sSetup(true)} style={{...S.btn,...S.btnP}}>다시</button><button onClick={onBack} style={{...S.btn,...S.btnG}}>돌아가기</button></div></div>}
+  if(!cur)return null;const cells=w2b(cur);const a=sc.c+sc.w;
+  return<div>
+    <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:12}}>
+      <button onClick={onBack} style={{...S.btn,...S.btnG,padding:'6px 12px',fontSize:12}}>✕</button><div style={{fontSize:12,color:'var(--text3)'}}>{a}/{tot} · 남은 {dk.length+1}</div></div>
+    <div style={{height:3,background:'var(--bg4)',borderRadius:2,marginBottom:16,overflow:'hidden'}}><div style={{height:'100%',background:'var(--warm)',borderRadius:2,transition:'width .3s',width:`${Math.min(100,a/tot*100)}%`}}/></div>
+    <div key={ak} style={{...S.card,textAlign:'center',padding:24,marginBottom:14,animation:'popIn .25s ease',background:'linear-gradient(145deg,var(--card),var(--card2))'}}>
+      <div style={{fontSize:11,color:'var(--text3)',marginBottom:10}}>{dir==='b2h'?'이 점자 단어는?':'이 단어의 점자는?'}</div>
+      {dir==='b2h'?<div style={{display:'flex',justifyContent:'center',flexWrap:'wrap',gap:3}}>{cells.map((d,i)=><BrailleCell key={i} dots={d} size={50}/>)}</div>
+        :<div style={{fontSize:36,fontWeight:900,color:'var(--warm)'}}>{cur}</div>}
+    </div>
+    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>
+      {opts.map(o=>{const ok=o===cur;const isSel=sel===o;const sr=sel!==null;const oc=w2b(o);
+        let bg='var(--card)',bd='var(--border)',an='';
+        if(sr&&ok){bg='rgba(102,187,106,.15)';bd='rgba(102,187,106,.5)'}
+        if(sr&&isSel&&!ok){bg='rgba(239,83,80,.15)';bd='rgba(239,83,80,.5)';an='shake .4s ease'}
+        return<button key={o} onClick={()=>ans(o)} disabled={sr} style={{...S.card,padding:14,textAlign:'center',cursor:sel?'default':'pointer',background:bg,borderColor:bd,animation:an,opacity:sr&&!ok&&!isSel?.4:1,transition:'all .3s'}}>
+          {dir==='b2h'?<div style={{fontSize:18,fontWeight:700}}>{o}</div>:
+            <div style={{display:'flex',justifyContent:'center',flexWrap:'wrap',gap:1}}>{oc.slice(0,8).map((d,i)=><BrailleCell key={i} dots={d} size={28}/>)}{oc.length>8&&<span style={{fontSize:10,color:'var(--text3)'}}>+{oc.length-8}</span>}</div>}
+        </button>})}</div></div>;
+}
+
+// ── 단어 탭 ──
+function WordTab(){
+  const [search,setSearch]=useState('');const [quiz,sQuiz]=useState(false);
+  const [hL,sHL]=useState(false);const [hR,sHR]=useState(false);
+  const filtered=WORDS.filter(w=>w.includes(search));
+  if(quiz)return<WordQuiz onBack={()=>sQuiz(false)}/>;
+  return<div>
+    <div style={{display:'flex',gap:8,marginBottom:10}}>
+      <div style={{flex:1,position:'relative'}}>
+        <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="단어 검색..."
+          style={{width:'100%',padding:'10px 14px 10px 36px',background:'var(--bg3)',border:'1px solid var(--border)',borderRadius:'var(--radius-sm)',color:'var(--text)',fontSize:14,fontFamily:'var(--font)',outline:'none'}}/>
+        <span style={{position:'absolute',left:12,top:'50%',transform:'translateY(-50%)',fontSize:14,opacity:.4}}>🔍</span></div>
+      <button onClick={()=>sQuiz(true)} style={{...S.btn,...S.btnW,padding:'10px 16px',fontSize:13}}>🧠 퀴즈</button></div>
+    <HideBar hL={hL} sHL={sHL} hR={hR} sHR={sHR} lL="단어" lR="점자"/>
+    <div style={{fontSize:12,color:'var(--text3)',marginBottom:10}}>일상 단어 {filtered.length}개 · 탭하면 분해</div>
+    {filtered.map((w,i)=><WordItem key={w} word={w} index={i} hL={hL} hR={hR}/>)}
+  </div>;
+}
+
+// ── 설정 ──
+function SettingsTab(){
+  return<div>
+    <div style={{...S.card,padding:20}}>
+      <div style={{fontSize:15,fontWeight:700,marginBottom:8,display:'flex',alignItems:'center',gap:8}}>ℹ️ 점자 기본 구조</div>
+      <div style={{display:'flex',justifyContent:'center',marginBottom:16}}><BrailleCell dots={[1,2,3,4,5,6]} size={100} showNumbers={true}/></div>
+      <div style={{fontSize:13,color:'var(--text2)',lineHeight:1.8}}>점자 한 칸은 <strong>6개 점</strong>으로 구성됩니다.<br/>왼쪽 위→아래: 1·2·3점<br/>오른쪽 위→아래: 4·5·6점<br/><br/>한글 점자는 <strong>풀어쓰기</strong> 방식으로,<br/>초성 → 모음 → 종성 순서로 적습니다.</div></div>
+    <div style={{...S.card,padding:20}}>
+      <div style={{fontSize:15,fontWeight:700,marginBottom:8,display:'flex',alignItems:'center',gap:8}}>📖 학습 순서</div>
+      <div style={{fontSize:13,color:'var(--text2)',lineHeight:1.8}}><strong>1단계</strong>: 초성 14개<br/><strong>2단계</strong>: 모음 14개<br/><strong>3단계</strong>: 종성 14개<br/><strong>4단계</strong>: 약자·약어<br/><strong>5단계</strong>: 단어 연습</div></div>
+    <div style={{...S.card,padding:20}}>
+      <div style={{fontSize:15,fontWeight:700,marginBottom:8,display:'flex',alignItems:'center',gap:8}}>🔑 핵심 규칙</div>
+      <div style={{fontSize:13,color:'var(--text2)',lineHeight:1.8}}>• 초성 ㅇ → <strong>생략</strong><br/>• 초성 오른쪽 점 → 왼쪽 옮기면 종성<br/>• ㅏ 생략 가능 (ㄱ,ㄹ,ㅅ,ㅇ,ㅊ 뒤 제외)<br/>• 쌍자음 = 된소리표(6점) + 초성<br/>• 겹받침 = 종성 두 개 순서대로</div></div>
+    <div style={{...S.card,padding:20}}>
+      <div style={{fontSize:15,fontWeight:700,marginBottom:8,display:'flex',alignItems:'center',gap:8}}>🏷️ 사용법</div>
+      <div style={{fontSize:13,color:'var(--text2)',lineHeight:1.8}}>• <strong>한글/단어 가림</strong>: 점자만 보고 맞춰보기<br/>• <strong>점자 가림</strong>: 한글만 보고 점자 떠올리기<br/>• 가린 상태에서 개별 탭 → 해당 항목만 공개<br/>• 상세 보기: 점 번호 표시<br/>• 🧠 퀴즈: 4지선다, 양방향, 틀린 문제 반복</div></div>
+    <div style={{textAlign:'center',padding:'20px 0',fontSize:11,color:'var(--text3)'}}>점자 학습 v1.1 · 2017 개정 한국 점자 규정 기준</div>
+  </div>;
+}
+
+// ── 앱 ──
+function App(){
+  const [tab,sTab]=useState('jamo');
+  const tabs=[{id:'jamo',l:'자모',i:'🔤'},{id:'word',l:'단어',i:'📖'},{id:'settings',l:'설정',i:'⚙️'}];
+  return<div style={S.app}>
+    <div style={{padding:'16px 20px 12px',display:'flex',alignItems:'center',justifyContent:'center',gap:10}}>
+      <span style={{fontSize:24}}>⠿</span>
+      <div style={{fontSize:20,fontWeight:700,letterSpacing:'-.5px',background:'linear-gradient(135deg,#4fc3f7,#29b6f6,#4fc3f7)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent'}}>점자 학습</div></div>
+    <div style={S.content}>
+      {tab==='jamo'&&<JamoTab/>}{tab==='word'&&<WordTab/>}{tab==='settings'&&<SettingsTab/>}
+    </div>
+    <div style={S.tabBar}><div style={S.tabBarInner}>
+      {tabs.map(t=><button key={t.id} onClick={()=>sTab(t.id)} style={{...S.tab,...(tab===t.id?S.tabActive:{})}}>
+        <span style={{fontSize:22,lineHeight:1}}>{t.i}</span><span>{t.l}</span>
+        {tab===t.id&&<div style={{width:4,height:4,borderRadius:2,background:'var(--accent)',marginTop:-1}}/>}
+      </button>)}
+    </div></div>
+  </div>;
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
