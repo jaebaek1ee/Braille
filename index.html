@@ -92,23 +92,26 @@ function BC({cellsArray,size=44,showNumbers=false}){
   return<div style={{display:'flex',gap:2,flexWrap:'wrap',alignItems:'center'}}>{cellsArray.map((d,i)=><BrailleCell key={i} dots={d} size={size} showNumbers={showNumbers}/>)}</div>;
 }
 
-// ══ 인터랙티브 점 입력 셀 ══
-function DotInputCell({activeDots,onToggle,size=80,disabled=false,result=null}){
-  // result: null=미제출, 'correct', 'wrong'
-  const r=size*.14,g=size*.26,ox=size*.28,oy=size*.16;
-  const P=[{x:ox,y:oy,n:1},{x:ox+g,y:oy,n:4},{x:ox,y:oy+g,n:2},{x:ox+g,y:oy+g,n:5},{x:ox,y:oy+g*2,n:3},{x:ox+g,y:oy+g*2,n:6}];
+// ══ 인터랙티브 점 입력 (HTML 버튼 그리드) ══
+function DotInputCell({activeDots,onToggle,disabled=false,result=null}){
   let borderColor='rgba(79,195,247,.4)';
   if(result==='correct')borderColor='rgba(102,187,106,.7)';
   if(result==='wrong')borderColor='rgba(239,83,80,.7)';
-  return(<svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} style={{flexShrink:0,cursor:disabled?'default':'pointer'}}>
-    <rect x={2} y={2} width={size-4} height={size-4} rx={size*.14} fill="rgba(255,255,255,.04)" stroke={borderColor} strokeWidth={2}/>
-    {P.map(p=>{const on=activeDots.includes(p.n);
-      return<g key={p.n} onClick={()=>{if(!disabled)onToggle(p.n)}} style={{cursor:disabled?'default':'pointer'}}>
-        <circle cx={p.x} cy={p.y} r={r+4} fill="transparent"/>
-        <circle cx={p.x} cy={p.y} r={r} fill={on?"#4fc3f7":"rgba(255,255,255,.1)"} stroke={on?"rgba(79,195,247,.6)":"rgba(255,255,255,.15)"} strokeWidth={1.5} style={on?{filter:'drop-shadow(0 0 6px rgba(79,195,247,.6))'}:{}}/>
-        <text x={p.x} y={p.y+1} textAnchor="middle" dominantBaseline="middle" fill={on?"#fff":"rgba(255,255,255,.25)"} fontSize={r*.9} fontWeight={600} fontFamily="var(--font)">{p.n}</text>
-      </g>})}
-  </svg>);
+  // 점 순서: 1,4 / 2,5 / 3,6 (왼쪽위→아래, 오른쪽위→아래)
+  const grid=[[1,4],[2,5],[3,6]];
+  const dotSize=52;
+  return<div style={{display:'inline-flex',flexDirection:'column',gap:10,padding:20,borderRadius:16,border:`2px solid ${borderColor}`,background:'rgba(255,255,255,.03)',transition:'border-color .3s'}}>
+    {grid.map((row,ri)=><div key={ri} style={{display:'flex',gap:14,justifyContent:'center'}}>
+      {row.map(n=>{const on=activeDots.includes(n);
+        return<button key={n} onClick={()=>{if(!disabled)onToggle(n)}} style={{
+          width:dotSize,height:dotSize,borderRadius:'50%',border:on?'2px solid rgba(79,195,247,.7)':'2px solid rgba(255,255,255,.15)',
+          background:on?'rgba(79,195,247,.25)':'rgba(255,255,255,.06)',
+          color:on?'#fff':'rgba(255,255,255,.3)',fontSize:16,fontWeight:700,fontFamily:'var(--font)',
+          cursor:disabled?'default':'pointer',transition:'all .15s',display:'flex',alignItems:'center',justifyContent:'center',
+          boxShadow:on?'0 0 12px rgba(79,195,247,.4)':'none',transform:on?'scale(1.05)':'scale(1)',
+        }}>{n}</button>})}
+    </div>)}
+  </div>;
 }
 
 function HiddenBlock({onClick,w='60px',h='32px'}){
@@ -274,7 +277,7 @@ function Quiz({items,onBack,title,maxCount}){
       
       {/* 점 입력 영역 */}
       <div style={{display:'flex',flexDirection:'column',alignItems:'center',gap:12,marginBottom:16}}>
-        <DotInputCell activeDots={inputDots} onToggle={toggleDot} size={120} disabled={!!inputResult} result={inputResult}/>
+        <DotInputCell activeDots={inputDots} onToggle={toggleDot} disabled={!!inputResult} result={inputResult}/>
         
         {/* 오답 시 정답 표시 */}
         {showAnswer&&<div style={{animation:'popIn .3s ease',textAlign:'center'}}>
