@@ -192,7 +192,7 @@ function Quiz({items,onBack,title,maxCount}){
   // 직접입력: 점 토글
   const toggleDot=(n)=>{
     if(inputResult)return;
-    sInputDots(prev=>prev.includes(n)?prev.filter(x=>x!==n):[...prev]);
+    sInputDots(prev=>prev.includes(n)?prev.filter(x=>x!==n):[...prev,n]);
   };
   
   // 직접입력: 제출
