@@ -1,81 +1,205 @@
-# Korean Braille Learning App (점자 학습)
+# 점자 학습 앱 (수정판)
 
-A Progressive Web App (PWA) for learning Korean Braille (한글 점자), built as a single HTML file with React.
+이 파일 묶음은 업로드된 기존 `braille-app.html`과 `README.md`의 잘못된 데이터·규칙 설명·문서 안내를 바로잡은 버전입니다.  
+**기존 UI 구조와 기능(자모 탭, 단어 탭, 설정 탭, 가리기, 퀴즈, 직접 점 찍기)은 유지**하고, 실제로 틀렸던 부분만 수정했습니다.
 
-## Overview
+## 포함 파일
 
-This app was created to help my parents learn Korean Braille for teaching visually impaired students. It covers the complete Korean Braille system based on the **2017 Revised Korean Braille Standard** (한국 점자 규정).
+- `braille-app-fixed.html`
+- `README-fixed.md`
 
-## Features
+## 실행 방법
 
-### Jamo Tab (자모)
-- **6 categories**: Chosung (초성, 14), Moeum (모음, 17), Jongsung (종성, 14), Abbreviations (약자, 11), Double consonants (쌍자음, 5), Abbreviated words (약어, 7)
-- **Left = Hangul / Right = Braille** layout with interactive 6-dot cell visualization
-- **Hide/Reveal toggle**: Hide Hangul or Braille side, tap individual items to reveal
-- **Combined Quiz (종합 퀴즈)**: Mix all categories with adjustable question count
+- `braille-app-fixed.html`을 최신 브라우저에서 열면 됩니다.
+- 별도 빌드 과정은 없습니다.
+- 다만 **React / ReactDOM / Babel을 CDN에서 불러오기 때문에 인터넷 연결이 필요합니다.**
+- 기존 README의 `index.html` 안내는 잘못되어 제거했습니다.
 
-### Quiz Modes (3 types)
-1. **Braille → Hangul** (4-choice multiple choice)
-2. **Hangul → Braille** (4-choice multiple choice)
-3. **Direct Dot Input** ✍️ — Tap the 6 dots to build the braille pattern, then submit
-- Wrong answers are re-added to the deck and repeated until correct
+## 이번 수정의 기준
 
-### Word Tab (단어)
-- 70 everyday Korean words with full braille breakdown
-- Tap any word to see syllable-by-syllable decomposition (초성+중성+종성 → braille cells)
-- Hide/Reveal toggle for self-testing
-- Word quiz with adjustable count (10/20/30/50)
+이 수정본은 **2017 개정 한국 점자 규정 해설서(2020 반영본)**에 나온 자모, 약자, 약어, 특수 규칙을 기준으로 앱의 학습 범위를 다시 맞춘 버전입니다.  
+또한 **한국 점자 규정은 2024년에 다시 개정**되었으므로, 실무용 점역/검수에는 최신 공식 규정을 다시 확인하는 것이 좋습니다.
 
-### Settings Tab (설정)
-- Braille structure guide (6-dot numbering system)
-- Recommended learning order
-- Key rules summary
-- Usage instructions
+## 무엇을 고쳤는가
 
-## Braille Data Accuracy
+### 1) 점자 데이터 자체의 오류와 누락 수정
 
-All braille dot patterns have been verified against:
-- [Korean Braille Standard (한국 점자 규정)](https://www.korean.go.kr/front/page/pageView.do?page_id=P000302&mn_id=205)
-- [delvier/hanbraille](https://github.com/delvier/hanbraille) — verified open-source Korean Braille converter
-- [hi098123 Braille Translator](https://t.hi098123.com/braille)
+#### `YAKYEO`
+- `그러나`의 점형을 `[[1],[1,4]]`로 수정했습니다.
 
-### Covered patterns
-| Category | Count | Description |
-|----------|-------|-------------|
-| Chosung (초성) | 14 | Initial consonants |
-| Moeum (모음) | 17 | Vowels (including compound: ㅘ,ㅚ,ㅝ,ㅢ) |
-| Jongsung (종성) | 14 | Final consonants (batchim) |
-| Yakja (약자) | 11 | Syllable abbreviations (가,사,나,다,...) |
-| Ssang (쌍자음) | 5 | Double consonants (ㄲ,ㄸ,ㅃ,ㅆ,ㅉ) |
-| Yakyeo (약어) | 7 | Word abbreviations (그래서,그러나,...) |
+#### `MOEUM`
+- 기존 17개에서 **21개 전체**로 확장했습니다.
+- 새로 명시한 항목:
+  - `ㅒ`
+  - `ㅙ`
+  - `ㅞ`
+  - `ㅟ`
 
-## Tech Stack
+#### `JONGSUNG`
+- 기존 누락이 있던 받침을 추가했습니다.
+- 추가한 항목:
+  - `ㄲ`
+  - `ㅆ`
 
-- **React 18** + Babel (in-browser JSX compilation)
-- **Single HTML file** — no build step, no server required
-- **PWA-ready** — add to home screen on mobile for app-like experience
-- **localStorage-free** — all data is embedded, no external dependencies
+#### `YAKJA`
+기존 11개만 있던 약자를 아래처럼 확장했습니다.
 
-## Installation
+- 기본 약자 11개  
+  `가, 나, 다, 마, 바, 사, 자, 카, 타, 파, 하`
+- 모음 시작 약자 14개  
+  `억, 언, 얼, 연, 열, 영, 옥, 온, 옹, 운, 울, 은, 을, 인`
+- 2칸 약자  
+  `것`
 
-### Option 1: GitHub Pages (Recommended)
-1. Fork or clone this repository
-2. Enable GitHub Pages in Settings → Pages → Deploy from `main` branch
-3. Access at `https://<username>.github.io/<repo-name>/`
+#### `SPECIAL_SYLLABLES`
+규정에서 별도 처리하는 항목을 새 배열로 분리해 추가했습니다.
 
-### Option 2: Local
-Simply open `index.html` in any modern browser (Chrome recommended).
+- 된소리 + 약자:
+  - `까`
+  - `따`
+  - `빠`
+  - `싸`
+  - `짜`
+- 특수 규칙:
+  - `껏`
+  - `껐`
+  - `성`
+  - `썽`
+  - `정`
+  - `쩡`
+  - `청`
 
-### Mobile (Add to Home Screen)
-1. Open the URL in Chrome (Android) or Safari (iOS)
-2. Tap ⋮ → "Add to Home Screen"
-3. The app will launch without the browser address bar
+---
 
-## License
+### 2) 단어 변환 엔진을 표준 규칙 기반으로 교체
 
-MIT
+기존 코드는 `w2b()`가 단어를 단순히 음절별 `초성 → 중성 → 종성`으로만 풀어썼습니다.  
+수정본은 `analyzeWord()`를 새로 두고, `w2b()`가 그 결과를 펼치도록 바꿨습니다.
 
-## Acknowledgments
+현재 적용 순서는 다음과 같습니다.
 
-- Korean Braille standard by [National Institute of Korean Language](https://korean.go.kr)
-- Original system: 훈맹정음 (1926) by Park Du-seong (박두성)
+1. **단어 약어** 먼저 확인  
+   - `그래서, 그러나, 그러면, 그러므로, 그런데, 그리고, 그리하여`
+
+2. **특수 음절** 확인  
+   - `까, 따, 빠, 싸, 짜, 껏, 껐, 성, 썽, 정, 쩡, 청`
+
+3. **모음 시작 약자** 확인  
+   - `억, 언, 얼, 연, 열, 영, 옥, 온, 옹, 운, 울, 은, 을, 인`
+
+4. **`ㅏ` 생략 약자** 적용 여부 판단  
+   - `가, 나, 다, 마, 바, 사, 자, 카, 타, 파, 하`
+   - 단, 다음 음절이 모음으로 시작하면 `나, 다, 마, 바, 자, 카, 타, 파, 하`의 `ㅏ` 생략을 막도록 처리
+
+5. **나머지는 일반 풀어쓰기**
+   - 초성
+   - 모음
+   - 종성
+   - 겹받침 분해
+
+추가로 다음 규칙도 반영했습니다.
+
+- 받침 `ㄲ`, `ㅆ`
+- `다예`처럼 **모음 + 예** 사이의 붙임표 `-`
+- `야애 / 와애 / 우애 / 워애` 계열 혼동 방지용 붙임표
+- `껐 = 꺼 + 받침 ㅆ`
+
+---
+
+### 3) 단어 상세 보기 설명 방식 수정
+
+기존 단어 탭의 상세 보기는 사실상 “기계적 음절 분해”였습니다.  
+수정본은 `WordItem`에서 `analyzeWord(word)`를 사용해 **실제 표준 변환 과정**을 보여주도록 바꿨습니다.
+
+즉, 상세 보기에서 단순히 `초성+중성+종성`만 보이지 않고:
+
+- 약어가 적용되었는지
+- 약자가 적용되었는지
+- 특수 규칙이 적용되었는지
+- 기본 분해로 처리되었는지
+
+를 각 항목별 메모로 확인할 수 있습니다.
+
+---
+
+### 4) 퀴즈 진행 표시 오류 수정
+
+기존 퀴즈는 틀린 문제를 덱 뒤에 다시 넣으면서도, 진행 막대의 분모는 원래 문제 수(`tot`)만 쓰는 경우가 있어  
+**상단 숫자와 막대 길이가 서로 다른 기준으로 움직일 수 있었습니다.**
+
+수정본에서는 진행 표시를 모두 아래 기준으로 통일했습니다.
+
+- 분자: `정답 수 + 오답 수`
+- 분모: `초기 문제 수 + 누적 오답 수`
+
+즉 코드상으로는 `progressDen = tot + sc.w`를 사용합니다.
+
+---
+
+### 5) 설정 탭 규칙 설명 정정
+
+기존 설정 탭은 학습용 요약으로는 볼 수 있어도, 규정 설명으로는 지나치게 단순한 부분이 있었습니다.  
+수정본에서는 다음 항목을 실제 구현과 일치하게 다시 썼습니다.
+
+- 초성 `ㅇ` 생략
+- 모음 21개 범위
+- 종성 16개 범위 (`ㄲ`, `ㅆ` 포함)
+- 기본 약자 / 모음 시작 약자 / `것`
+- `라`, `차`는 `ㅏ` 생략 약자를 쓰지 않는 점
+- `성·썽·정·쩡·청`, `껏`, `껐`
+- 단어 약어 7개
+- 최신 규정(2024) 확인 필요 안내
+
+---
+
+### 6) 접근성 수정
+
+기존 viewport에는 `user-scalable=no`가 들어 있어 확대가 막혀 있었습니다.  
+수정본에서는 이 값을 제거해 확대를 막지 않도록 했습니다.
+
+---
+
+### 7) 단어 예시 목록 보강
+
+단어 탭과 퀴즈에서 표준 규칙이 실제로 보이도록 예시 단어를 조금 보강했습니다.  
+예를 들어 아래 같은 단어를 추가해 규칙이 드러나게 했습니다.
+
+- `그래서`
+- `그러나`
+- `그리고`
+- `다음`
+- `마음`
+- `하얀`
+- `가을`
+- `서울`
+- `기억`
+- `정성`
+- `한껏`
+
+기존 UI 동작은 그대로 두고, **규칙이 드러나는 학습 예시만 보완**한 것입니다.
+
+## 코드에서 수정 위치를 찾는 방법
+
+HTML 내부에 아래 주석 표식을 넣어 두었습니다.
+
+- `[FIX-01]` 데이터 보정
+- `[FIX-02]` 표준 변환 엔진 도입
+- `[FIX-03]` 개발용 검증 `console.assert`
+- `[FIX-04]` 단어 목록 보강
+- `[FIX-05]` 종합 퀴즈에 새 항목 포함
+- `[FIX-06]` 자모 탭 카테고리/개수 갱신
+- `[FIX-07]` 진행 표시 분모 통일
+- `[FIX-08]` 단어 상세를 표준 변환 과정으로 변경
+- `[FIX-09]` 설정 탭 규칙 설명 재작성
+- `[FIX-10]` viewport 접근성 수정
+
+즉, **코드 안에서 `[FIX-` 문자열을 검색하면 수정 지점을 바로 찾을 수 있게** 해 두었습니다.
+
+## 이번 수정에서 의도적으로 하지 않은 것
+
+- UI 레이아웃 재설계
+- 스타일 전면 변경
+- 오프라인 완전 자급 실행용 번들링
+- 최신(2024) 규정 전체를 새 앱 설계 수준으로 재작성
+
+이번 목적은 **기존 UI를 유지하면서 잘못된 부분을 바로잡는 것**이기 때문입니다.
