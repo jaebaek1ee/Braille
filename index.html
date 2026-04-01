@@ -32,15 +32,15 @@ const {useState,useEffect}=React;
 // ══ 점자 데이터 ══
 const CHOSUNG=[{char:'ㄱ',dots:[4],desc:'기역'},{char:'ㄴ',dots:[1,4],desc:'니은'},{char:'ㄷ',dots:[2,4],desc:'디귿'},{char:'ㄹ',dots:[5],desc:'리을'},{char:'ㅁ',dots:[1,5],desc:'미음'},{char:'ㅂ',dots:[4,5],desc:'비읍'},{char:'ㅅ',dots:[6],desc:'시옷'},{char:'ㅇ',dots:[],desc:'이응 (초성에서 생략)'},{char:'ㅈ',dots:[4,6],desc:'지읒'},{char:'ㅊ',dots:[5,6],desc:'치읓'},{char:'ㅋ',dots:[1,2,4],desc:'키읔'},{char:'ㅌ',dots:[1,2,5],desc:'티읕'},{char:'ㅍ',dots:[1,4,5],desc:'피읖'},{char:'ㅎ',dots:[2,4,5],desc:'히읗'}];
 const JONGSUNG=[{char:'ㄱ',dots:[1],desc:'기역 받침'},{char:'ㄴ',dots:[2,5],desc:'니은 받침'},{char:'ㄷ',dots:[3,5],desc:'디귿 받침'},{char:'ㄹ',dots:[2],desc:'리을 받침'},{char:'ㅁ',dots:[2,6],desc:'미음 받침'},{char:'ㅂ',dots:[1,2],desc:'비읍 받침'},{char:'ㅅ',dots:[3],desc:'시옷 받침'},{char:'ㅇ',dots:[2,3,5,6],desc:'이응 받침'},{char:'ㅈ',dots:[1,3],desc:'지읒 받침'},{char:'ㅊ',dots:[2,3],desc:'치읓 받침'},{char:'ㅋ',dots:[2,3,5],desc:'키읔 받침'},{char:'ㅌ',dots:[2,3,6],desc:'티읕 받침'},{char:'ㅍ',dots:[2,5,6],desc:'피읖 받침'},{char:'ㅎ',dots:[3,5,6],desc:'히읗 받침'}];
-const MOEUM=[{char:'ㅏ',dots:[1,2,6],desc:'아'},{char:'ㅑ',dots:[3,4,5],desc:'야'},{char:'ㅓ',dots:[2,3,4],desc:'어'},{char:'ㅕ',dots:[1,5,6],desc:'여'},{char:'ㅗ',dots:[1,3,6],desc:'오'},{char:'ㅛ',dots:[3,4,6],desc:'요'},{char:'ㅜ',dots:[1,3,4],desc:'우'},{char:'ㅠ',dots:[1,4,6],desc:'유'},{char:'ㅡ',dots:[2,4,6],desc:'으'},{char:'ㅣ',dots:[1,3,5],desc:'이'},{char:'ㅐ',dots:[1,2,3,5],desc:'애'},{char:'ㅔ',dots:[1,3,4,5],desc:'에'},{char:'ㅖ',dots:[3,4],desc:'예'},{char:'ㅚ',dots:[1,2,3,4,5],desc:'외'}];
+const MOEUM=[{char:'ㅏ',dots:[1,2,6],desc:'아'},{char:'ㅑ',dots:[3,4,5],desc:'야'},{char:'ㅓ',dots:[2,3,4],desc:'어'},{char:'ㅕ',dots:[1,5,6],desc:'여'},{char:'ㅗ',dots:[1,3,6],desc:'오'},{char:'ㅛ',dots:[3,4,6],desc:'요'},{char:'ㅜ',dots:[1,3,4],desc:'우'},{char:'ㅠ',dots:[1,4,6],desc:'유'},{char:'ㅡ',dots:[2,4,6],desc:'으'},{char:'ㅣ',dots:[1,3,5],desc:'이'},{char:'ㅐ',dots:[1,2,3,5],desc:'애'},{char:'ㅔ',dots:[1,3,4,5],desc:'에'},{char:'ㅖ',dots:[3,4],desc:'예'},{char:'ㅘ',dots:[1,2,3,6],desc:'와 (합자)'},{char:'ㅚ',dots:[1,3,4,5,6],desc:'외 (합자)'},{char:'ㅝ',dots:[1,2,3,4],desc:'워 (합자)'},{char:'ㅢ',dots:[2,4,5,6],desc:'의 (합자)'}];
 const YAKJA=[{char:'가',dots:[[1,2,4,6]],desc:'가 약자'},{char:'사',dots:[[1,2,3]],desc:'사 약자'},{char:'나',dots:[[1,4]],desc:'나=ㄴ(ㅏ생략)'},{char:'다',dots:[[2,4]],desc:'다=ㄷ(ㅏ생략)'},{char:'마',dots:[[1,5]],desc:'마=ㅁ(ㅏ생략)'},{char:'바',dots:[[4,5]],desc:'바=ㅂ(ㅏ생략)'},{char:'자',dots:[[4,6]],desc:'자=ㅈ(ㅏ생략)'},{char:'카',dots:[[1,2,4]],desc:'카=ㅋ(ㅏ생략)'},{char:'타',dots:[[1,2,5]],desc:'타=ㅌ(ㅏ생략)'},{char:'파',dots:[[1,4,5]],desc:'파=ㅍ(ㅏ생략)'},{char:'하',dots:[[2,4,5]],desc:'하=ㅎ(ㅏ생략)'}];
-const YAKYEO=[{char:'그래서',dots:[[1],[1,2,6]],desc:'약어'},{char:'그러나',dots:[[1],[1,4]],desc:'약어'},{char:'그러면',dots:[[1],[1,5]],desc:'약어'},{char:'그러므로',dots:[[1],[2,6]],desc:'약어'},{char:'그런데',dots:[[1],[2,4]],desc:'약어'},{char:'그리고',dots:[[1],[1,3,6]],desc:'약어'},{char:'그리하여',dots:[[1],[2,4,5]],desc:'약어'}];
+const YAKYEO=[{char:'그래서',dots:[[1],[2,3,4]],desc:'약어'},{char:'그러나',dots:[[1],[1,2]],desc:'약어'},{char:'그러면',dots:[[1],[2,5]],desc:'약어'},{char:'그러므로',dots:[[1],[2,6]],desc:'약어'},{char:'그런데',dots:[[1],[1,3,4,5]],desc:'약어'},{char:'그리고',dots:[[1],[1,3,6]],desc:'약어'},{char:'그리하여',dots:[[1],[1,5,6]],desc:'약어'}];
 const SSANG=[{char:'ㄲ',dots:[[6],[4]],desc:'된소리표+ㄱ'},{char:'ㄸ',dots:[[6],[2,4]],desc:'된소리표+ㄷ'},{char:'ㅃ',dots:[[6],[4,5]],desc:'된소리표+ㅂ'},{char:'ㅆ',dots:[[6],[6]],desc:'된소리표+ㅅ'},{char:'ㅉ',dots:[[6],[4,6]],desc:'된소리표+ㅈ'}];
 
 const CHOSUNG_MAP={};CHOSUNG.forEach(c=>{if(c.char!=='ㅇ')CHOSUNG_MAP[c.char]=c.dots});
 const JONGSUNG_MAP={};JONGSUNG.forEach(c=>JONGSUNG_MAP[c.char]=c.dots);
 const MOEUM_MAP={};MOEUM.forEach(m=>MOEUM_MAP[m.char]=m.dots);
-const CV={'ㅘ':[[1,3,6],[1,2,6]],'ㅝ':[[1,3,4],[2,3,4]],'ㅢ':[[2,4,6],[1,3,5]],'ㅟ':[[1,3,4],[1,2,3,5]],'ㅒ':[[3,4,5],[1,2,3,5]],'ㅙ':[[1,3,6],[1,2,3,5]],'ㅞ':[[1,3,4],[1,2,3,5]]};
+const CV={'ㅒ':[[3,4,5],[1,2,3,5]],'ㅙ':[[1,2,3,6],[1,2,3,5]],'ㅞ':[[1,2,3,4],[1,2,3,5]],'ㅟ':[[1,3,4],[1,2,3,5]]};
 const CHO_L=['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
 const JUNG_L=['ㅏ','ㅐ','ㅑ','ㅒ','ㅓ','ㅔ','ㅕ','ㅖ','ㅗ','ㅘ','ㅙ','ㅚ','ㅛ','ㅜ','ㅝ','ㅞ','ㅟ','ㅠ','ㅡ','ㅢ','ㅣ'];
 const JONG_L=['','ㄱ','ㄲ','ㄳ','ㄴ','ㄵ','ㄶ','ㄷ','ㄹ','ㄺ','ㄻ','ㄼ','ㄽ','ㄾ','ㄿ','ㅀ','ㅁ','ㅂ','ㅄ','ㅅ','ㅆ','ㅇ','ㅈ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
@@ -325,7 +325,7 @@ function JamoTab(){
   
   const cats=[
     {id:'cho',l:'초성',e:'🔤',d:CHOSUNG,ds:'첫소리 자음 14개'},
-    {id:'mo',l:'모음',e:'🔡',d:MOEUM,ds:'홀소리 14개'},
+    {id:'mo',l:'모음',e:'🔡',d:MOEUM,ds:'홀소리 17개'},
     {id:'jong',l:'종성',e:'📝',d:JONGSUNG,ds:'받침 자음 14개'},
     {id:'yakja',l:'약자',e:'⚡',d:YAKJA,ds:'자주 쓰는 글자 축약'},
     {id:'ssang',l:'쌍자음',e:'✌️',d:SSANG,ds:'된소리 5개'},
@@ -493,14 +493,14 @@ function SettingsTab(){
       <div style={{fontSize:13,color:'var(--text2)',lineHeight:1.8}}>점자 한 칸은 <strong>6개 점</strong>으로 구성됩니다.<br/>왼쪽 위→아래: 1·2·3점<br/>오른쪽 위→아래: 4·5·6점<br/><br/>한글 점자는 <strong>풀어쓰기</strong> 방식으로,<br/>초성 → 모음 → 종성 순서로 적습니다.</div></div>
     <div style={{...S.card,padding:20}}>
       <div style={{fontSize:15,fontWeight:700,marginBottom:8,display:'flex',alignItems:'center',gap:8}}>📖 학습 순서</div>
-      <div style={{fontSize:13,color:'var(--text2)',lineHeight:1.8}}><strong>1단계</strong>: 초성 14개<br/><strong>2단계</strong>: 모음 14개<br/><strong>3단계</strong>: 종성 14개<br/><strong>4단계</strong>: 약자·약어<br/><strong>5단계</strong>: 단어 연습</div></div>
+      <div style={{fontSize:13,color:'var(--text2)',lineHeight:1.8}}><strong>1단계</strong>: 초성 14개<br/><strong>2단계</strong>: 모음 17개<br/><strong>3단계</strong>: 종성 14개<br/><strong>4단계</strong>: 약자·약어<br/><strong>5단계</strong>: 단어 연습</div></div>
     <div style={{...S.card,padding:20}}>
       <div style={{fontSize:15,fontWeight:700,marginBottom:8,display:'flex',alignItems:'center',gap:8}}>🔑 핵심 규칙</div>
       <div style={{fontSize:13,color:'var(--text2)',lineHeight:1.8}}>• 초성 ㅇ → <strong>생략</strong><br/>• 초성 오른쪽 점 → 왼쪽 옮기면 종성<br/>• ㅏ 생략 가능 (ㄱ,ㄹ,ㅅ,ㅇ,ㅊ 뒤 제외)<br/>• 쌍자음 = 된소리표(6점) + 초성<br/>• 겹받침 = 종성 두 개 순서대로</div></div>
     <div style={{...S.card,padding:20}}>
       <div style={{fontSize:15,fontWeight:700,marginBottom:8,display:'flex',alignItems:'center',gap:8}}>🏷️ 사용법</div>
       <div style={{fontSize:13,color:'var(--text2)',lineHeight:1.8}}>• <strong>한글/단어 가림</strong>: 점자만 보고 맞춰보기<br/>• <strong>점자 가림</strong>: 한글만 보고 점자 떠올리기<br/>• 가린 상태에서 개별 탭 → 해당 항목만 공개<br/>• ✍️ <strong>직접 점 찍기</strong>: 점을 터치해서 입력 후 제출<br/>• 🏆 <strong>종합 퀴즈</strong>: 모든 자모 섞어서 출제<br/>• 🧠 퀴즈: 4지선다, 양방향, 틀린 문제 반복</div></div>
-    <div style={{textAlign:'center',padding:'20px 0',fontSize:11,color:'var(--text3)'}}>점자 학습 v1.2 · 2017 개정 한국 점자 규정 기준</div>
+    <div style={{textAlign:'center',padding:'20px 0',fontSize:11,color:'var(--text3)'}}>점자 학습 v1.3 · 2017 개정 한국 점자 규정 기준</div>
   </div>;
 }
 
